@@ -65,7 +65,6 @@ func main() {
 				PrintStat(xdp_map, &mu, seen)
 			case <-stop:
 				return
-
 			}
 		}
 	}()
@@ -92,15 +91,15 @@ func PrintStat(xdp_map *ebpf.Map, mu *sync.Mutex, seen map[uint32]uint64) {
 			ip := GetIP(k)
 			names, err := net.LookupAddr(ip)
 			if err != nil {
-				fmt.Printf("%s\n", err.Error())
-				continue
+				fmt.Printf("\r%s: %d\n", ip, v)
+			} else {
+				fmt.Printf("\r%v: %d [ip: %s]\n", names, v, ip)
 			}
-			fmt.Printf("\r%v: %d\n", names, v)
 		}
-
+		fmt.Printf("\r")
 		mu.Unlock()
 		if updated {
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(1 * time.Second)
 		}
 	}
 }
